@@ -1,4 +1,4 @@
-# Composing Text and Image for Image Retrieval
+# TIRG code ported to Python3
 
 This is the code for the paper:
 

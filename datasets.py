@@ -24,6 +24,8 @@ import torchvision
 import warnings
 import random
 
+def return_input_function(x):
+    return x
 
 class BaseDataset(torch.utils.data.Dataset):
   """Base class for a dataset."""
@@ -44,7 +46,7 @@ class BaseDataset(torch.utils.data.Dataset):
         shuffle=shuffle,
         num_workers=num_workers,
         drop_last=drop_last,
-        collate_fn=lambda i: i)
+        collate_fn=return_input_function)
 
   def get_test_queries(self):
     return self.test_queries
@@ -242,7 +244,7 @@ class Fashion200k(BaseDataset):
             'modifiable': False
         }
         self.imgs += [img]
-    print 'Fashion200k:', len(self.imgs), 'images'
+    print('Fashion200k:', len(self.imgs), 'images')
 
     # generate query for training or testing
     if split == 'train':
@@ -301,7 +303,7 @@ class Fashion200k(BaseDataset):
           caption2imgids[c] = []
         caption2imgids[c].append(i)
     self.caption2imgids = caption2imgids
-    print len(caption2imgids), 'unique cations'
+    print(len(caption2imgids), 'unique cations')
 
     # parent captions are 1-word shorter than their children
     parent2children_captions = {}
@@ -329,7 +331,7 @@ class Fashion200k(BaseDataset):
     for img in self.imgs:
       if img['modifiable']:
         num_modifiable_imgs += 1
-    print 'Modifiable images', num_modifiable_imgs
+    print('Modifiable images', num_modifiable_imgs)
 
   def caption_index_sample_(self, idx):
     while not self.imgs[idx]['modifiable']:
@@ -420,6 +422,8 @@ class MITStates(BaseDataset):
         continue
 
       for file_path in listdir(path + '/images/' + f):
+        if len(file_path) > 10000:
+            continue
         assert (file_path.endswith('jpg'))
         self.imgs += [{
             'file_path': path + '/images/' + f + '/' + file_path,
@@ -483,7 +487,7 @@ class MITStates(BaseDataset):
       self.caption2imgids[cap].append(i)
       if adj not in self.noun2adjs[noun]:
         self.noun2adjs[noun].append(adj)
-    for noun, adjs in self.noun2adjs.iteritems():
+    for noun, adjs in self.noun2adjs.items():
       assert len(adjs) >= 2
 
   def caption_index_sample_(self, idx):
@@ -510,7 +514,7 @@ class MITStates(BaseDataset):
                   'str': mod_str
               }
           }]
-    print len(self.test_queries), 'test queries'
+    print(len(self.test_queries), 'test queries')
 
   def __len__(self):
     return len(self.imgs)
